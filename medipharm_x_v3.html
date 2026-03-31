@@ -1,0 +1,827 @@
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#0D9E75;--teal-d:#0A7A5A;--teal-l:#E0F5EE;
+  --ink:#0F1C1A;--ink2:#3A5050;--ink3:#6B8585;
+  --surface:#F4F8F7;--card:#fff;--border:#DDE8E6;
+  --red:#C0392B;--amber:#B8820A;--blue:#1565C0;
+  --fh:'Syne',sans-serif;--fb:'DM Sans',sans-serif;
+}
+body{font-family:var(--fb);background:var(--surface);color:var(--ink);font-size:14px}
+/* LOGIN */
+.lw{min-height:620px;display:flex;align-items:stretch}
+.ll{width:42%;background:var(--ink);display:flex;flex-direction:column;justify-content:center;padding:40px 36px;position:relative;overflow:hidden}
+.ll::before{content:'';position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;background:var(--teal);opacity:.12}
+.ll::after{content:'';position:absolute;bottom:-40px;left:-40px;width:160px;height:160px;border-radius:50%;background:var(--teal);opacity:.08}
+.brand{font-family:var(--fh);font-size:26px;color:#fff}.brand span{color:var(--teal)}
+.btag{font-size:11px;color:#6B9E95;margin-top:4px;letter-spacing:.5px}
+.ltag{margin-top:28px;font-size:14px;color:#A0C4BD;line-height:1.7;font-weight:300}
+.lfs{margin-top:24px;display:flex;flex-direction:column;gap:9px}
+.lf{display:flex;align-items:center;gap:9px;font-size:12px;color:#7BADA6}
+.ld{width:6px;height:6px;border-radius:50%;background:var(--teal);flex-shrink:0}
+.lr{flex:1;display:flex;flex-direction:column;justify-content:center;padding:40px 36px;background:var(--card)}
+.lr h2{font-family:var(--fh);font-size:22px;margin-bottom:5px}
+.lsub{font-size:13px;color:var(--ink3);margin-bottom:26px}
+.fg{margin-bottom:13px}
+.fg label{display:block;font-size:11px;font-weight:500;color:var(--ink2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px}
+.fg input,.fg select,.fg textarea{width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-family:var(--fb);font-size:13px;color:var(--ink);background:var(--surface)}
+.fg input:focus,.fg select:focus{outline:none;border-color:var(--teal);background:#fff}
+.fg textarea{resize:vertical;min-height:60px}
+.btn-lg{width:100%;padding:11px;background:var(--teal);color:#fff;border:none;border-radius:8px;font-family:var(--fh);font-size:14px;font-weight:600;cursor:pointer;transition:background .15s}
+.btn-lg:hover{background:var(--teal-d)}
+.lerr{color:var(--red);font-size:12px;margin-top:7px;display:none}
+.dhint{margin-top:18px;padding:11px;background:var(--surface);border-radius:8px;border:1px solid var(--border);font-size:11px;color:var(--ink3);line-height:1.9}
+.dhint b{color:var(--ink2)}
+/* APP */
+.shell{display:none;min-height:620px;flex-direction:column}
+.topbar{display:flex;align-items:center;gap:10px;padding:0 14px;height:50px;background:var(--ink);flex-shrink:0}
+.tb-brand{font-family:var(--fh);font-size:16px;color:#fff}.tb-brand span{color:var(--teal)}
+.depts{display:flex;gap:4px;flex:1;overflow-x:auto}
+.dp{padding:4px 11px;border-radius:20px;background:transparent;border:1px solid #2A4040;color:#7BADA6;font-size:11px;cursor:pointer;white-space:nowrap;font-family:var(--fb)}
+.dp.active{background:var(--teal);color:#fff;border-color:var(--teal)}
+.uc{display:flex;align-items:center;gap:7px;flex-shrink:0}
+.av{width:28px;height:28px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;font-family:var(--fh)}
+.un{font-size:11px;color:#fff;font-weight:500}.ur{font-size:10px;color:#6B9E95}
+/* CHECK-IN STATUS CHIP */
+.ci-chip{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;font-family:var(--fh);letter-spacing:.3px}
+.ci-in{background:#0D9E7530;color:#5DCAA5;border:1px solid #0D9E7550}
+.ci-out{background:#C0392B20;color:#E07070;border:1px solid #C0392B40}
+.btn-lo{padding:4px 9px;border:1px solid #2A4040;border-radius:6px;background:transparent;color:#7BADA6;font-size:11px;cursor:pointer;font-family:var(--fb)}
+.btn-lo:hover{background:#1E3030}
+.subnav{display:flex;gap:2px;padding:6px 14px;background:var(--card);border-bottom:1px solid var(--border);overflow-x:auto}
+.sn{padding:7px 14px;border-radius:6px;border:none;background:transparent;color:var(--ink3);font-size:13px;cursor:pointer;font-family:var(--fb);white-space:nowrap}
+.sn.active{background:var(--teal-l);color:var(--teal-d);font-weight:500}
+.main{padding:14px;flex:1;overflow-y:auto}
+/* STATS */
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:16px}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:13px}
+.sl{font-size:10px;color:var(--ink3);margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px}
+.sv{font-size:22px;font-weight:600;font-family:var(--fh)}.sv.g{color:var(--teal)}.sv.a{color:var(--amber)}.sv.r{color:var(--red)}
+/* TABLE */
+.tw{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.th2{display:flex;justify-content:space-between;align-items:center;padding:13px 15px;border-bottom:1px solid var(--border)}
+.tt{font-family:var(--fh);font-size:14px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;padding:9px 13px;border-bottom:1px solid var(--border);color:var(--ink3);font-size:10px;text-transform:uppercase;letter-spacing:.4px;font-weight:500;background:var(--surface)}
+td{padding:9px 13px;border-bottom:1px solid var(--border)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#F9FDFC}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:500}
+.bg{background:#E0F5EE;color:#0A7A5A}.ba{background:#FEF3D7;color:#8A5F00}
+.br{background:#FDECEA;color:var(--red)}.bb{background:#E3F0FF;color:var(--blue)}
+.bgr{background:#EDF0EF;color:#4A6060}
+/* BUTTONS */
+.btn{padding:5px 12px;border-radius:7px;border:1px solid var(--border);background:var(--card);color:var(--ink);cursor:pointer;font-size:11px;font-family:var(--fb);transition:all .12s}
+.btn:hover{background:var(--surface)}
+.btn-p{background:var(--teal);color:#fff;border-color:var(--teal)}.btn-p:hover{background:var(--teal-d)}
+.btn-d{color:var(--red);border-color:#F0C0BC}.btn-d:hover{background:#FDECEA}
+.btn-amber{background:#FEF3D7;color:#8A5F00;border-color:#E8C97050}
+/* MODAL */
+.mbg{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:200}
+.modal{background:var(--card);border-radius:12px;padding:22px;width:min(420px,94%);max-height:90vh;overflow-y:auto}
+.modal h3{font-family:var(--fh);font-size:15px;margin-bottom:15px}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ma{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+.ib{padding:7px 12px;border:1px solid var(--border);border-radius:7px;background:var(--surface);color:var(--ink);font-size:12px;font-family:var(--fb)}
+.ib:focus{outline:none;border-color:var(--teal)}
+.empty{text-align:center;padding:40px;color:var(--ink3);font-size:13px}
+/* RECEIPT */
+.receipt{background:#fff;font-family:'Courier New',monospace;font-size:12px;padding:20px;max-width:320px;margin:0 auto;border:1px solid var(--border);border-radius:8px}
+.receipt-title{text-align:center;font-family:var(--fh);font-size:18px;margin-bottom:2px}
+.receipt-sub{text-align:center;font-size:10px;color:var(--ink3);margin-bottom:12px}
+.receipt-divider{border-top:1px dashed var(--border);margin:10px 0}
+.receipt-row{display:flex;justify-content:space-between;margin:4px 0;font-size:11px}
+.receipt-total{display:flex;justify-content:space-between;font-weight:700;font-size:13px;margin-top:6px}
+/* CHECKIN */
+.ci-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px}
+.ci-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:14px}
+.staff-ci-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.sci-top{display:flex;align-items:center;gap:10px}
+.sci-av{width:36px;height:36px;border-radius:50%;background:var(--teal-l);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--teal-d);font-family:var(--fh);flex-shrink:0}
+.sci-name{font-weight:500;font-size:13px}.sci-role{font-size:11px;color:var(--ink3)}
+.sci-time{font-size:11px;color:var(--ink3);display:flex;gap:6px;align-items:center}
+.sci-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);flex-shrink:0}
+.sci-dot.out{background:var(--red)}
+.work-bar{height:6px;border-radius:3px;background:var(--border);overflow:hidden;margin-top:4px}
+.work-fill{height:100%;background:var(--teal);border-radius:3px;transition:width .3s}
+/* CHART */
+.chart-wrap{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:14px}
+.chart-wrap canvas{max-height:200px}
+@media(max-width:500px){.ll{display:none}.lr{padding:24px 18px}.fr{grid-template-columns:1fr}}
+</style>
+
+<div id="login-screen">
+<div class="lw">
+  <div class="ll">
+    <div class="brand">Medi<span>Pharm</span> X</div>
+    <div class="btag">CLINIC & PHARMACY MANAGEMENT</div>
+    <p class="ltag">Complete staff accountability — every action, every dispensing, every hour worked — all tracked.</p>
+    <div class="lfs">
+      <div class="lf"><div class="ld"></div>Per-staff login with role-based access</div>
+      <div class="lf"><div class="ld"></div>Dispensing & billing tied to staff accounts</div>
+      <div class="lf"><div class="ld"></div>Staff check-in / check-out time tracking</div>
+      <div class="lf"><div class="ld"></div>Full audit trail for every action</div>
+      <div class="lf"><div class="ld"></div>Dashboard with revenue & inventory charts</div>
+      <div class="lf"><div class="ld"></div>Receipt printing for every bill</div>
+    </div>
+  </div>
+  <div class="lr">
+    <h2>Welcome back</h2>
+    <p class="lsub">Sign in to your MediPharm X account</p>
+    <div class="fg"><label>Username</label><input id="l-user" placeholder="Enter username" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div class="fg"><label>Password</label><input id="l-pass" type="password" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div id="lerr" class="lerr">Incorrect username or password.</div>
+    <button class="btn-lg" onclick="doLogin()">Sign in</button>
+    <div class="dhint">
+      <b>Demo accounts:</b><br>
+      admin / admin123 &nbsp;·&nbsp; Full admin access<br>
+      sarah / pass123 &nbsp;·&nbsp; Pharmacist<br>
+      james / pass123 &nbsp;·&nbsp; Dispenser<br>
+      mary / pass123 &nbsp;·&nbsp; Receptionist
+    </div>
+  </div>
+</div>
+</div>
+
+<div id="app-shell" class="shell">
+  <div class="topbar">
+    <div class="tb-brand">Medi<span>Pharm</span> X</div>
+    <div class="depts" id="dept-bar"></div>
+    <div class="uc">
+      <div id="ci-status-chip"></div>
+      <div style="text-align:right"><div class="un" id="tn"></div><div class="ur" id="tr2"></div></div>
+      <div class="av" id="tav"></div>
+      <button class="btn-lo" onclick="doLogout()">Sign out</button>
+    </div>
+  </div>
+  <div class="subnav" id="subnav"></div>
+  <div class="main" id="mc"></div>
+</div>
+<div id="modal-root"></div>
+
+<script>
+const ROLES={
+  admin:{label:'Admin',tabs:['dashboard','inventory','prescriptions','patients','billing','attendance','audit','admin']},
+  pharmacist:{label:'Pharmacist',tabs:['dashboard','inventory','prescriptions','patients','billing']},
+  dispenser:{label:'Dispenser',tabs:['inventory','prescriptions']},
+  receptionist:{label:'Receptionist',tabs:['patients','billing']},
+};
+const TL={dashboard:'Dashboard',inventory:'Inventory',prescriptions:'Prescriptions',patients:'Patients',billing:'Billing',attendance:'Attendance',audit:'Audit Log',admin:'Admin'};
+
+let db={
+  users:[
+    {id:1,username:'admin',password:'admin123',name:'Admin User',role:'admin',dept:null,active:true},
+    {id:2,username:'sarah',password:'pass123',name:'Sarah Mutua',role:'pharmacist',dept:1,active:true},
+    {id:3,username:'james',password:'pass123',name:'James Otieno',role:'dispenser',dept:1,active:true},
+    {id:4,username:'mary',password:'pass123',name:'Mary Wanjiku',role:'receptionist',dept:2,active:true},
+  ],
+  departments:[{id:1,name:'Pharmacy'},{id:2,name:'General OPD'},{id:3,name:'Laboratory'}],
+  drugs:[
+    {id:1,deptId:1,name:'Amoxicillin 500mg',category:'Antibiotic',qty:240,unit:'Caps',price:15,reorder:50},
+    {id:2,deptId:1,name:'Paracetamol 500mg',category:'Analgesic',qty:18,unit:'Tabs',price:5,reorder:100},
+    {id:3,deptId:1,name:'Metformin 850mg',category:'Antidiabetic',qty:320,unit:'Tabs',price:12,reorder:80},
+    {id:4,deptId:2,name:'Normal Saline 500ml',category:'IV Fluid',qty:45,unit:'Bottles',price:120,reorder:20},
+  ],
+  patients:[{id:1,name:'John Kamau',dob:'1985-04-12',gender:'Male',phone:'0712345678',deptId:2,regDate:'01 Jan 2025',regBy:'mary'}],
+  prescriptions:[],bills:[],audit:[],
+  attendance:[],// {id,userId,username,name,role,date,checkIn,checkOut,duration,note}
+  nextId:20,activeDept:1,activeTab:'dashboard',
+};
+let currentUser=null;
+let chartInstances={};
+
+async function save(){try{await window.storage.set('mpx3-db',JSON.stringify(db))}catch(e){}}
+async function load(){
+  try{const r=await window.storage.get('mpx3-db');if(r&&r.value){const s=JSON.parse(r.value);db={...db,...s};}}catch(e){}
+}
+function uid(){return db.nextId++;}
+function ts(){return new Date().toLocaleString('en-KE',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});}
+function today(){return new Date().toLocaleDateString('en-KE',{day:'2-digit',month:'short',year:'numeric'});}
+function nowTime(){return new Date().toLocaleTimeString('en-KE',{hour:'2-digit',minute:'2-digit'});}
+function initials(n){return n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();}
+function canDo(a){
+  const m={addDrug:['admin','pharmacist'],deleteDrug:['admin'],restock:['admin','pharmacist','dispenser'],
+    addRx:['admin','pharmacist'],dispense:['admin','pharmacist','dispenser'],
+    addPatient:['admin','pharmacist','receptionist'],addBill:['admin','receptionist','pharmacist'],
+    markPaid:['admin','receptionist'],manageUsers:['admin'],addDept:['admin'],viewAttendance:['admin']};
+  return m[a]?.includes(currentUser?.role);
+}
+function log(action,detail=''){
+  db.audit.unshift({id:uid(),time:ts(),user:currentUser.username,userName:currentUser.name,
+    role:currentUser.role,dept:db.departments.find(d=>d.id===db.activeDept)?.name||'—',action,detail});
+  if(db.audit.length>300)db.audit=db.audit.slice(0,300);
+}
+
+// ── CHECK IN / OUT ──
+function getMyAttendanceToday(){
+  return db.attendance.find(a=>a.userId===currentUser.id&&a.date===today());
+}
+function isCheckedIn(){
+  const a=getMyAttendanceToday();
+  return a&&a.checkIn&&!a.checkOut;
+}
+function updateCiChip(){
+  const chip=document.getElementById('ci-status-chip');
+  if(!chip)return;
+  const cin=isCheckedIn();
+  chip.innerHTML=`<span class="ci-chip ${cin?'ci-in':'ci-out'}">${cin?'● Checked in':'○ Checked out'}</span>`;
+}
+function doCheckIn(){
+  if(isCheckedIn()){alert('You are already checked in.');return;}
+  const existing=getMyAttendanceToday();
+  if(existing&&existing.checkOut){alert('You have already completed your shift today.');return;}
+  const rec={id:uid(),userId:currentUser.id,username:currentUser.username,name:currentUser.name,
+    role:currentUser.role,date:today(),checkIn:nowTime(),checkOut:null,duration:null,note:''};
+  db.attendance.push(rec);
+  log('Checked in',`Time: ${rec.checkIn}`);
+  save();updateCiChip();renderMain();
+}
+function doCheckOut(){
+  const rec=getMyAttendanceToday();
+  if(!rec||!rec.checkIn){alert('You have not checked in today.');return;}
+  if(rec.checkOut){alert('Already checked out.');return;}
+  rec.checkOut=nowTime();
+  // calc duration
+  try{
+    const [ih,im]=rec.checkIn.split(':').map(Number);
+    const [oh,om]=rec.checkOut.split(':').map(Number);
+    const mins=(oh*60+om)-(ih*60+im);
+    const h=Math.floor(Math.abs(mins)/60);const m=Math.abs(mins)%60;
+    rec.duration=`${h}h ${m}m`;
+  }catch(e){rec.duration='—';}
+  log('Checked out',`Time: ${rec.checkOut} · Duration: ${rec.duration}`);
+  save();updateCiChip();renderMain();
+}
+
+// ── LOGIN ──
+function doLogin(){
+  const u=document.getElementById('l-user').value.trim();
+  const p=document.getElementById('l-pass').value;
+  const user=db.users.find(x=>x.username===u&&x.password===p&&x.active);
+  if(!user){document.getElementById('lerr').style.display='block';return;}
+  document.getElementById('lerr').style.display='none';
+  currentUser=user;
+  db.activeDept=user.dept||db.departments[0]?.id||1;
+  db.activeTab=ROLES[user.role].tabs[0];
+  log('Logged in');save();showApp();
+}
+function doLogout(){
+  if(isCheckedIn()){if(!confirm('You are still checked in. Check out before signing out?'))return;doCheckOut();}
+  log('Logged out');save();currentUser=null;
+  document.getElementById('app-shell').style.display='none';
+  document.getElementById('login-screen').style.display='block';
+  document.getElementById('l-pass').value='';
+  Object.values(chartInstances).forEach(c=>{try{c.destroy()}catch(e){}});chartInstances={};
+}
+function showApp(){
+  document.getElementById('login-screen').style.display='none';
+  const app=document.getElementById('app-shell');app.style.display='flex';
+  document.getElementById('tn').textContent=currentUser.name;
+  document.getElementById('tr2').textContent=ROLES[currentUser.role].label;
+  document.getElementById('tav').textContent=initials(currentUser.name);
+  updateCiChip();renderDepts();renderSubNav();renderMain();
+}
+
+function renderDepts(){
+  let depts=db.departments;
+  if(currentUser.role!=='admin'&&currentUser.dept)depts=depts.filter(d=>d.id===currentUser.dept);
+  document.getElementById('dept-bar').innerHTML=depts.map(d=>
+    `<button class="dp${d.id===db.activeDept?' active':''}" onclick="setDept(${d.id})">${d.name}</button>`
+  ).join('');
+}
+function setDept(id){db.activeDept=id;renderDepts();renderMain();}
+function renderSubNav(){
+  const tabs=ROLES[currentUser.role].tabs;
+  document.getElementById('subnav').innerHTML=tabs.map(t=>
+    `<button class="sn${t===db.activeTab?' active':''}" onclick="switchTab('${t}',this)">${TL[t]}</button>`
+  ).join('');
+}
+function switchTab(tab,el){
+  db.activeTab=tab;
+  document.querySelectorAll('.sn').forEach(b=>b.classList.remove('active'));
+  if(el)el.classList.add('active');
+  Object.values(chartInstances).forEach(c=>{try{c.destroy()}catch(e){}});chartInstances={};
+  renderMain();
+}
+function renderMain(){
+  const fns={dashboard:renderDashboard,inventory:renderInventory,prescriptions:renderPrescriptions,
+    patients:renderPatients,billing:renderBilling,attendance:renderAttendance,audit:renderAudit,admin:renderAdmin};
+  (fns[db.activeTab]||renderDashboard)();
+}
+
+// ── DASHBOARD ──
+function renderDashboard(){
+  const drugs=db.drugs.filter(d=>d.deptId===db.activeDept);
+  const bills=db.bills.filter(b=>b.deptId===db.activeDept);
+  const rxs=db.prescriptions.filter(r=>r.deptId===db.activeDept);
+  const pts=db.patients.filter(p=>p.deptId===db.activeDept);
+  const totalRev=bills.filter(b=>b.status==='paid').reduce((s,b)=>s+b.total,0);
+  const pending=bills.filter(b=>b.status==='unpaid').reduce((s,b)=>s+b.total,0);
+  const low=drugs.filter(d=>d.qty<=d.reorder).length;
+  const todayCheckedIn=db.attendance.filter(a=>a.date===today()&&a.checkIn).length;
+  const myRec=getMyAttendanceToday();
+  const cin=isCheckedIn();
+
+  document.getElementById('mc').innerHTML=`
+    <div class="sg">
+      <div class="sc"><div class="sl">Revenue (KSh)</div><div class="sv g">${totalRev.toLocaleString()}</div></div>
+      <div class="sc"><div class="sl">Outstanding (KSh)</div><div class="sv a">${pending.toLocaleString()}</div></div>
+      <div class="sc"><div class="sl">Low stock items</div><div class="sv ${low?'r':'g'}">${low}</div></div>
+      <div class="sc"><div class="sl">Patients</div><div class="sv">${pts.length}</div></div>
+      <div class="sc"><div class="sl">Prescriptions</div><div class="sv">${rxs.length}</div></div>
+      <div class="sc"><div class="sl">Staff in today</div><div class="sv g">${todayCheckedIn}</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+      <div class="chart-wrap"><div style="font-family:var(--fh);font-size:13px;margin-bottom:10px">Billing overview</div><canvas id="billChart"></canvas></div>
+      <div class="chart-wrap"><div style="font-family:var(--fh);font-size:13px;margin-bottom:10px">Stock levels</div><canvas id="stockChart"></canvas></div>
+    </div>
+    <div class="ci-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <span style="font-family:var(--fh);font-size:14px">My attendance — ${today()}</span>
+        <span class="ci-chip ${cin?'ci-in':'ci-out'}">${cin?'● On shift':'○ Off shift'}</span>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        ${!myRec||(!myRec.checkIn)?`<button class="btn btn-p" onclick="doCheckIn()">✓ Check in</button><span style="font-size:12px;color:var(--ink3)">You haven't checked in yet today</span>`:''}
+        ${myRec&&myRec.checkIn&&!myRec.checkOut?`
+          <button class="btn btn-amber" onclick="doCheckOut()">✕ Check out</button>
+          <span style="font-size:12px;color:var(--ink3)">Checked in at <b>${myRec.checkIn}</b></span>`:''}
+        ${myRec&&myRec.checkOut?`
+          <span class="badge bg">Shift complete</span>
+          <span style="font-size:12px;color:var(--ink3)">In: <b>${myRec.checkIn}</b> · Out: <b>${myRec.checkOut}</b> · Duration: <b>${myRec.duration}</b></span>`:''}
+      </div>
+    </div>
+    <div class="tw">
+      <div class="th2"><span class="tt">Recent activity</span></div>
+      <table><thead><tr><th>Time</th><th>Staff</th><th>Action</th><th>Detail</th></tr></thead>
+      <tbody>${db.audit.slice(0,8).map(l=>`<tr>
+        <td style="font-size:10px;color:var(--ink3)">${l.time}</td>
+        <td><span class="badge bgr" style="font-size:10px">${l.userName||l.user}</span></td>
+        <td style="font-weight:500">${l.action}</td>
+        <td style="font-size:11px;color:var(--ink3)">${l.detail}</td>
+      </tr>`).join('')||`<tr><td colspan="4" class="empty">No activity yet</td></tr>`}
+      </tbody></table>
+    </div>`;
+
+  // Charts
+  setTimeout(()=>{
+    const paid=bills.filter(b=>b.status==='paid').length;
+    const unpaid=bills.filter(b=>b.status==='unpaid').length;
+    const bc=document.getElementById('billChart');
+    if(bc&&typeof Chart!=='undefined'){
+      try{chartInstances.bill=new Chart(bc,{type:'doughnut',data:{labels:['Paid','Unpaid'],datasets:[{data:[paid,unpaid],backgroundColor:['#0D9E75','#FEF3D7'],borderColor:['#0A7A5A','#E8C970'],borderWidth:1}]},options:{plugins:{legend:{position:'bottom',labels:{font:{size:10},padding:8}}},cutout:'65%'}});}catch(e){}
+    }
+    const sc=document.getElementById('stockChart');
+    if(sc&&typeof Chart!=='undefined'){
+      const top=drugs.slice(0,5);
+      try{chartInstances.stock=new Chart(sc,{type:'bar',data:{labels:top.map(d=>d.name.split(' ')[0]),datasets:[{label:'Stock',data:top.map(d=>d.qty),backgroundColor:top.map(d=>d.qty<=d.reorder?'#FDECEA':'#E0F5EE'),borderColor:top.map(d=>d.qty<=d.reorder?'#C0392B':'#0D9E75'),borderWidth:1}]},options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{font:{size:9}}},x:{ticks:{font:{size:9}}}}}});}catch(e){}
+    }
+  },100);
+}
+
+// ── INVENTORY ──
+function deptDrugs(){return db.drugs.filter(d=>d.deptId===db.activeDept);}
+function renderInventory(){
+  const drugs=deptDrugs();
+  const low=drugs.filter(d=>d.qty<=d.reorder).length;
+  const val=drugs.reduce((s,d)=>s+d.qty*d.price,0);
+  document.getElementById('mc').innerHTML=`
+    <div class="sg">
+      <div class="sc"><div class="sl">Items</div><div class="sv">${drugs.length}</div></div>
+      <div class="sc"><div class="sl">Low stock</div><div class="sv ${low?'r':'g'}">${low}</div></div>
+      <div class="sc"><div class="sl">Value (KSh)</div><div class="sv g">${val.toLocaleString()}</div></div>
+    </div>
+    <div class="tw">
+      <div class="th2"><span class="tt">Drug inventory</span>
+        <div style="display:flex;gap:7px;align-items:center">
+          <input class="ib" id="dsearch" placeholder="Search..." oninput="renderInventory()" style="width:150px">
+          ${canDo('addDrug')?`<button class="btn btn-p" onclick="showDrugModal()">+ Add drug</button>`:''}
+        </div>
+      </div>
+      ${drugs.length?`<table><thead><tr><th>Drug</th><th>Category</th><th>Stock</th><th>Price (KSh)</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>${drugs.filter(d=>{const s=document.getElementById('dsearch');return !s||d.name.toLowerCase().includes(s.value.toLowerCase())}).map(d=>`<tr>
+        <td style="font-weight:500">${d.name}</td><td>${d.category}</td>
+        <td>${d.qty} ${d.unit}</td><td>${d.price.toLocaleString()}</td>
+        <td><span class="badge ${d.qty<=d.reorder?'br':'bg'}">${d.qty<=d.reorder?'Low stock':'In stock'}</span></td>
+        <td style="display:flex;gap:5px">
+          ${canDo('restock')?`<button class="btn" onclick="showRestockModal(${d.id})">Restock</button>`:''}
+          ${canDo('deleteDrug')?`<button class="btn btn-d" onclick="delDrug(${d.id})">Remove</button>`:''}
+        </td>
+      </tr>`).join('')}</tbody></table>`:`<div class="empty">No drugs yet.</div>`}
+    </div>`;
+}
+function showDrugModal(){
+  showModal(`<h3>Add drug</h3>
+    <div class="fg"><label>Drug name</label><input id="m-dn" placeholder="e.g. Amoxicillin 500mg"></div>
+    <div class="fr">
+      <div class="fg"><label>Category</label><select id="m-dc"><option>Antibiotic</option><option>Analgesic</option><option>Antidiabetic</option><option>Antihypertensive</option><option>Antifungal</option><option>IV Fluid</option><option>Supplement</option><option>Other</option></select></div>
+      <div class="fg"><label>Unit</label><select id="m-du"><option>Tabs</option><option>Caps</option><option>Bottles</option><option>Vials</option><option>Sachets</option><option>Ampoules</option></select></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>Quantity</label><input id="m-dq" type="number" min="0" placeholder="0"></div>
+      <div class="fg"><label>Price/unit (KSh)</label><input id="m-dp" type="number" min="0" placeholder="0"></div>
+    </div>
+    <div class="fg"><label>Reorder level</label><input id="m-dr" type="number" min="0" placeholder="50"></div>
+    <div class="ma"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn btn-p" onclick="addDrug()">Add</button></div>`);
+}
+function addDrug(){
+  const name=document.getElementById('m-dn').value.trim();if(!name)return;
+  db.drugs.push({id:uid(),deptId:db.activeDept,name,category:document.getElementById('m-dc').value,
+    qty:parseInt(document.getElementById('m-dq').value)||0,unit:document.getElementById('m-du').value,
+    price:parseFloat(document.getElementById('m-dp').value)||0,reorder:parseInt(document.getElementById('m-dr').value)||50});
+  log('Added drug',name);closeModal();save();renderMain();
+}
+function showRestockModal(id){
+  const d=db.drugs.find(x=>x.id===id);
+  showModal(`<h3>Restock: ${d.name}</h3>
+    <div class="fg"><label>Current stock</label><input value="${d.qty} ${d.unit}" disabled></div>
+    <div class="fg"><label>Add quantity</label><input id="m-ra" type="number" min="1" placeholder="0"></div>
+    <div class="ma"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn btn-p" onclick="restockDrug(${id})">Restock</button></div>`);
+}
+function restockDrug(id){
+  const add=parseInt(document.getElementById('m-ra').value)||0;
+  const d=db.drugs.find(x=>x.id===id);d.qty+=add;
+  log('Restocked',`${d.name} +${add}`);closeModal();save();renderMain();
+}
+function delDrug(id){
+  const d=db.drugs.find(x=>x.id===id);db.drugs=db.drugs.filter(x=>x.id!==id);
+  log('Removed drug',d?.name);save();renderMain();
+}
+
+// ── PRESCRIPTIONS ──
+function renderPrescriptions(){
+  const rxs=db.prescriptions.filter(r=>r.deptId===db.activeDept);
+  document.getElementById('mc').innerHTML=`
+    <div class="sg">
+      <div class="sc"><div class="sl">Total</div><div class="sv">${rxs.length}</div></div>
+      <div class="sc"><div class="sl">Pending</div><div class="sv a">${rxs.filter(r=>r.status==='pending').length}</div></div>
+      <div class="sc"><div class="sl">Dispensed today</div><div class="sv g">${rxs.filter(r=>r.status!=='pending'&&r.date===today()).length}</div></div>
+    </div>
+    <div class="tw">
+      <div class="th2"><span class="tt">Prescriptions</span>
+        ${canDo('addRx')?`<button class="btn btn-p" onclick="showRxModal()">+ New prescription</button>`:''}
+      </div>
+      ${rxs.length?`<table><thead><tr><th>Patient</th><th>Doctor</th><th>Drug(s)</th><th>Date</th><th>Created by</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>${rxs.slice().reverse().map(r=>`<tr>
+        <td style="font-weight:500">${r.patient}</td><td>${r.doctor}</td>
+        <td style="font-size:11px;color:var(--ink3)">${r.items.map(i=>i.drug+' ×'+i.qty).join(', ')}</td>
+        <td style="font-size:11px">${r.date}</td>
+        <td><span class="badge bgr" style="font-size:10px">${r.createdBy}</span></td>
+        <td><span class="badge ${r.status==='dispensed'||r.status==='billed'?'bg':r.status==='pending'?'ba':'bb'}">${r.status}</span></td>
+        <td style="display:flex;gap:5px">
+          ${r.status==='pending'&&canDo('dispense')?`<button class="btn btn-p" onclick="dispenseRx(${r.id})">Dispense</button>`:''}
+          ${r.status==='dispensed'&&canDo('addBill')?`<button class="btn" onclick="billRx(${r.id})">Bill</button>`:''}
+        </td>
+      </tr>`).join('')}</tbody></table>`:`<div class="empty">No prescriptions yet.</div>`}
+    </div>`;
+}
+function showRxModal(){
+  const drugs=deptDrugs();
+  const patients=db.patients.filter(p=>p.deptId===db.activeDept);
+  showModal(`<h3>New prescription</h3>
+    <div class="fr">
+      <div class="fg"><label>Patient</label><select id="m-rp"><option value="">-- Select --</option>${patients.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}<option value="__new__">+ Walk-in</option></select></div>
+      <div class="fg"><label>Doctor</label><input id="m-rd" placeholder="Dr. ..."></div>
+    </div>
+    <div id="m-wi" style="display:none" class="fg"><label>Walk-in name</label><input id="m-rn" placeholder="Full name"></div>
+    <div class="fg"><label>Drug</label><select id="m-rdi">${drugs.map(d=>`<option value="${d.id}">${d.name} (${d.qty} left)</option>`).join('')}</select></div>
+    <div class="fr">
+      <div class="fg"><label>Quantity</label><input id="m-rq" type="number" min="1" value="1"></div>
+      <div class="fg"><label>Instructions</label><input id="m-ri" placeholder="e.g. Twice daily"></div>
+    </div>
+    <div class="ma"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn btn-p" onclick="addRx()">Create</button></div>`);
+  document.getElementById('m-rp').onchange=function(){document.getElementById('m-wi').style.display=this.value==='__new__'?'block':'none';};
+}
+function addRx(){
+  const pid=document.getElementById('m-rp').value;
+  let pName=pid==='__new__'?document.getElementById('m-rn').value.trim():(db.patients.find(p=>p.id==pid)?.name||'Unknown');
+  if(!pName)return;
+  const dId=parseInt(document.getElementById('m-rdi').value);
+  const drug=db.drugs.find(d=>d.id===dId);
+  const qty=parseInt(document.getElementById('m-rq').value)||1;
+  db.prescriptions.push({id:uid(),deptId:db.activeDept,patient:pName,
+    doctor:document.getElementById('m-rd').value.trim()||'Unknown',
+    items:[{drug:drug?.name||'—',qty,drugId:dId,price:drug?.price||0}],
+    instructions:document.getElementById('m-ri').value.trim(),
+    date:today(),status:'pending',createdBy:currentUser.username,createdName:currentUser.name});
+  log('Created prescription',`Patient:${pName} · ${drug?.name} ×${qty}`);
+  closeModal();save();renderMain();
+}
+function dispenseRx(id){
+  const rx=db.prescriptions.find(r=>r.id===id);if(!rx)return;
+  rx.items.forEach(item=>{const d=db.drugs.find(x=>x.id===item.drugId);if(d)d.qty=Math.max(0,d.qty-item.qty);});
+  rx.status='dispensed';rx.dispensedBy=currentUser.username;rx.dispensedAt=ts();
+  log('Dispensed',`Patient:${rx.patient} by ${currentUser.name}`);save();renderMain();
+}
+function billRx(id){
+  const rx=db.prescriptions.find(r=>r.id===id);if(!rx)return;
+  const total=rx.items.reduce((s,i)=>s+(i.price||0)*i.qty,0);
+  db.bills.push({id:uid(),deptId:db.activeDept,patient:rx.patient,
+    description:rx.items.map(i=>i.drug).join(', '),total,date:today(),status:'unpaid',
+    createdBy:currentUser.username,rxId:id});
+  rx.status='billed';log('Billed prescription',`Patient:${rx.patient} KSh${total}`);
+  save();db.activeTab='billing';
+  document.querySelectorAll('.sn').forEach(b=>{b.classList.remove('active');if(b.textContent==='Billing')b.classList.add('active')});
+  renderMain();
+}
+
+// ── PATIENTS ──
+function renderPatients(){
+  const pts=db.patients.filter(p=>p.deptId===db.activeDept);
+  document.getElementById('mc').innerHTML=`
+    <div class="sg">
+      <div class="sc"><div class="sl">Registered</div><div class="sv">${pts.length}</div></div>
+      <div class="sc"><div class="sl">Today</div><div class="sv g">${pts.filter(p=>p.regDate===today()).length}</div></div>
+    </div>
+    <div class="tw">
+      <div class="th2"><span class="tt">Patient records</span>
+        <div style="display:flex;gap:7px;align-items:center">
+          <input class="ib" id="ptsearch" placeholder="Search..." oninput="renderPatients()" style="width:150px">
+          ${canDo('addPatient')?`<button class="btn btn-p" onclick="showPatientModal()">+ Register</button>`:''}
+        </div>
+      </div>
+      ${pts.length?`<table><thead><tr><th>Name</th><th>Gender</th><th>DOB</th><th>Phone</th><th>Registered</th><th>By</th></tr></thead>
+      <tbody>${pts.filter(p=>{const s=document.getElementById('ptsearch');return !s||p.name.toLowerCase().includes(s.value.toLowerCase())}).map(p=>`<tr>
+        <td style="font-weight:500">${p.name}</td><td>${p.gender}</td><td>${p.dob}</td>
+        <td>${p.phone}</td><td style="font-size:11px">${p.regDate}</td>
+        <td><span class="badge bgr" style="font-size:10px">${p.regBy}</span></td>
+      </tr>`).join('')}</tbody></table>`:`<div class="empty">No patients yet.</div>`}
+    </div>`;
+}
+function showPatientModal(){
+  showModal(`<h3>Register patient</h3>
+    <div class="fg"><label>Full name</label><input id="m-pn" placeholder="Full name"></div>
+    <div class="fr">
+      <div class="fg"><label>Date of birth</label><input id="m-pd" type="date"></div>
+      <div class="fg"><label>Gender</label><select id="m-pg"><option>Male</option><option>Female</option><option>Other</option></select></div>
+    </div>
+    <div class="fg"><label>Phone</label><input id="m-pp" placeholder="07XXXXXXXX"></div>
+    <div class="ma"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn btn-p" onclick="addPatient()">Register</button></div>`);
+}
+function addPatient(){
+  const name=document.getElementById('m-pn').value.trim();if(!name)return;
+  db.patients.push({id:uid(),deptId:db.activeDept,name,dob:document.getElementById('m-pd').value||'—',
+    gender:document.getElementById('m-pg').value,phone:document.getElementById('m-pp').value.trim()||'—',
+    regDate:today(),regBy:currentUser.username});
+  log('Registered patient',name);closeModal();save();renderMain();
+}
+
+// ── BILLING ──
+function renderBilling(){
+  const bills=db.bills.filter(b=>b.deptId===db.activeDept);
+  const total=bills.reduce((s,b)=>s+b.total,0);
+  const paid=bills.filter(b=>b.status==='paid').reduce((s,b)=>s+b.total,0);
+  document.getElementById('mc').innerHTML=`
+    <div class="sg">
+      <div class="sc"><div class="sl">Total billed (KSh)</div><div class="sv">${total.toLocaleString()}</div></div>
+      <div class="sc"><div class="sl">Collected (KSh)</div><div class="sv g">${paid.toLocaleString()}</div></div>
+      <div class="sc"><div class="sl">Outstanding (KSh)</div><div class="sv ${total-paid?'r':'g'}">${(total-paid).toLocaleString()}</div></div>
+    </div>
+    <div class="tw">
+      <div class="th2"><span class="tt">Bills</span>
+        ${canDo('addBill')?`<button class="btn btn-p" onclick="showBillModal()">+ New bill</button>`:''}
+      </div>
+      ${bills.length?`<table><thead><tr><th>Patient</th><th>Description</th><th>Amount (KSh)</th><th>Date</th><th>By</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>${bills.slice().reverse().map(b=>`<tr>
+        <td style="font-weight:500">${b.patient}</td>
+        <td style="font-size:11px;color:var(--ink3)">${b.description}</td>
+        <td style="font-weight:500">${b.total.toLocaleString()}</td>
+        <td style="font-size:11px">${b.date}</td>
+        <td><span class="badge bgr" style="font-size:10px">${b.createdBy}</span></td>
+        <td><span class="badge ${b.status==='paid'?'bg':'ba'}">${b.status}</span></td>
+        <td style="display:flex;gap:5px">
+          ${b.status==='unpaid'&&canDo('markPaid')?`<button class="btn btn-p" onclick="markPaid(${b.id})">Mark paid</button>`:''}
+          <button class="btn" onclick="printReceipt(${b.id})">Receipt</button>
+        </td>
+      </tr>`).join('')}</tbody></table>`:`<div class="empty">No bills yet.</div>`}
+    </div>`;
+}
+function showBillModal(){
+  showModal(`<h3>New bill</h3>
+    <div class="fg"><label>Patient name</label><input id="m-bn" placeholder="Full name"></div>
+    <div class="fg"><label>Description</label><input id="m-bd" placeholder="Consultation, lab tests, etc."></div>
+    <div class="fg"><label>Amount (KSh)</label><input id="m-ba" type="number" min="0" placeholder="0"></div>
+    <div class="ma"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn btn-p" onclick="addBill()">Create</button></div>`);
+}
+function addBill(){
+  const name=document.getElementById('m-bn').value.trim();if(!name)return;
+  const bill={id:uid(),deptId:db.activeDept,patient:name,
+    description:document.getElementById('m-bd').value.trim()||'Services',
+    total:parseFloat(document.getElementById('m-ba').value)||0,
+    date:today(),status:'unpaid',createdBy:currentUser.username};
+  db.bills.push(bill);log('Created bill',`Patient:${name} KSh${bill.total}`);
+  closeModal();save();renderMain();
+}
+function markPaid(id){
+  const b=db.bills.find(x=>x.id===id);if(!b)return;
+  b.status='paid';b.paidBy=currentUser.username;b.paidAt=ts();
+  log('Marked paid',`Patient:${b.patient} KSh${b.total}`);save();renderMain();
+}
+function printReceipt(id){
+  const b=db.bills.find(x=>x.id===id);if(!b)return;
+  const dept=db.departments.find(d=>d.id===b.deptId)?.name||'—';
+  showModal(`<h3>Receipt</h3>
+    <div class="receipt">
+      <div class="receipt-title">MediPharm X</div>
+      <div class="receipt-sub">${dept} Department · ${b.date}</div>
+      <div class="receipt-divider"></div>
+      <div class="receipt-row"><span>Patient</span><span>${b.patient}</span></div>
+      <div class="receipt-row"><span>Description</span><span>${b.description}</span></div>
+      <div class="receipt-row"><span>Billed by</span><span>${b.createdBy}</span></div>
+      <div class="receipt-row"><span>Status</span><span>${b.status.toUpperCase()}</span></div>
+      ${b.paidBy?`<div class="receipt-row"><span>Received by</span><span>${b.paidBy}</span></div>`:''}
+      <div class="receipt-divider"></div>
+      <div class="receipt-total"><span>TOTAL</span><span>KSh ${b.total.toLocaleString()}</span></div>
+      <div class="receipt-divider"></div>
+      <div style="text-align:center;font-size:10px;color:var(--ink3);margin-top:6px">Thank you for choosing MediPharm X<br>Receipt #MPX-${String(b.id).padStart(5,'0')}</div>
+    </div>
+    <div class="ma"><button class="btn" onclick="closeModal()">Close</button><button class="btn btn-p" onclick="window.print()">Print</button></div>`);
+}
+
+// ── ATTENDANCE ──
+function renderAttendance(){
+  const allRecs=db.attendance;
+  const todayRecs=allRecs.filter(a=>a.date===today());
+  const checkedInNow=todayRecs.filter(a=>a.checkIn&&!a.checkOut);
+  const completedToday=todayRecs.filter(a=>a.checkOut);
+  const myRec=getMyAttendanceToday();
+  const cin=isCheckedIn();
+
+  document.getElementById('mc').innerHTML=`
+    <div class="sg">
+      <div class="sc"><div class="sl">Currently in</div><div class="sv g">${checkedInNow.length}</div></div>
+      <div class="sc"><div class="sl">Completed today</div><div class="sv">${completedToday.length}</div></div>
+      <div class="sc"><div class="sl">Total records</div><div class="sv">${allRecs.length}</div></div>
+    </div>
+    <div class="ci-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <span style="font-family:var(--fh);font-size:14px">My attendance — ${today()}</span>
+        <span class="ci-chip ${cin?'ci-in':'ci-out'}">${cin?'● On shift':'○ Off shift'}</span>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        ${!myRec||!myRec.checkIn?`<button class="btn btn-p" onclick="doCheckIn()">✓ Check in now</button>`:''}
+        ${myRec&&myRec.checkIn&&!myRec.checkOut?`
+          <button class="btn btn-amber" onclick="doCheckOut()">✕ Check out</button>
+          <span style="font-size:12px;color:var(--ink3)">Checked in at <b>${myRec.checkIn}</b></span>`:''}
+        ${myRec&&myRec.checkOut?`<span class="badge bg">Shift complete · In: ${myRec.checkIn} · Out: ${myRec.checkOut} · ${myRec.duration}</span>`:''}
+      </div>
+    </div>
+    <div style="font-family:var(--fh);font-size:14px;margin-bottom:10px">Staff on shift now</div>
+    ${checkedInNow.length?`<div class="ci-grid">${checkedInNow.map(a=>{
+      const u=db.users.find(x=>x.username===a.username);
+      return `<div class="staff-ci-card">
+        <div class="sci-top">
+          <div class="sci-av">${initials(a.name)}</div>
+          <div><div class="sci-name">${a.name}</div><div class="sci-role">${ROLES[a.role]?.label||a.role}</div></div>
+        </div>
+        <div class="sci-time"><div class="sci-dot"></div>Checked in at ${a.checkIn}</div>
+        <div class="work-bar"><div class="work-fill" style="width:${Math.min(100,Math.round(calcPct(a.checkIn)))}%"></div></div>
+        <div style="font-size:10px;color:var(--ink3)">Elapsed: ${calcElapsed(a.checkIn)}</div>
+      </div>`;
+    }).join('')}</div>`:`<div class="empty" style="padding:24px">No staff currently checked in.</div>`}
+    ${canDo('viewAttendance')?`
+    <div class="tw" style="margin-top:14px">
+      <div class="th2"><span class="tt">All attendance records</span>
+        <select class="ib" id="att-filter" onchange="renderAttendance()" style="width:120px">
+          <option value="today">Today</option>
+          <option value="all">All time</option>
+        </select>
+      </div>
+      <table><thead><tr><th>Staff</th><th>Role</th><th>Date</th><th>Check in</th><th>Check out</th><th>Duration</th><th>Status</th></tr></thead>
+      <tbody>${(()=>{
+        const f=document.getElementById('att-filter')?.value||'today';
+        const recs=f==='today'?todayRecs:allRecs.slice().reverse();
+        return recs.length?recs.map(a=>`<tr>
+          <td style="font-weight:500">${a.name}</td>
+          <td><span class="badge bb" style="font-size:10px">${ROLES[a.role]?.label||a.role}</span></td>
+          <td style="font-size:11px">${a.date}</td>
+          <td style="font-size:11px">${a.checkIn||'—'}</td>
+          <td style="font-size:11px">${a.checkOut||'—'}</td>
+          <td style="font-size:11px">${a.duration||'Active'}</td>
+          <td><span class="badge ${a.checkOut?'bg':a.checkIn?'ba':'bgr'}">${a.checkOut?'Done':a.checkIn?'Active':'Absent'}</span></td>
+        </tr>`).join(''):`<tr><td colspan="7" class="empty">No records.</td></tr>`;
+      })()}</tbody></table>
+    </div>`:''}`;
+}
+function calcElapsed(checkIn){
+  try{
+    const [h,m]=checkIn.split(':').map(Number);
+    const now=new Date();const start=new Date();start.setHours(h,m,0);
+    const mins=Math.floor((now-start)/60000);
+    return `${Math.floor(mins/60)}h ${mins%60}m`;
+  }catch(e){return '—';}
+}
+function calcPct(checkIn){
+  try{
+    const [h,m]=checkIn.split(':').map(Number);
+    const now=new Date();const start=new Date();start.setHours(h,m,0);
+    const mins=(now-start)/60000;
+    return (mins/480)*100;// 8-hour shift = 100%
+  }catch(e){return 0;}
+}
+
+// ── AUDIT ──
+function renderAudit(){
+  document.getElementById('mc').innerHTML=`
+    <div class="tw">
+      <div class="th2"><span class="tt">Audit log</span><span style="font-size:11px;color:var(--ink3)">${db.audit.length} entries</span></div>
+      ${db.audit.length?`<div>${db.audit.map(l=>`
+        <div style="padding:9px 13px;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:flex-start;font-size:12px">
+          <span style="color:var(--ink3);font-size:10px;white-space:nowrap;min-width:100px">${l.time}</span>
+          <span style="color:var(--teal-d);font-weight:500;min-width:90px">${l.userName||l.user}</span>
+          <span class="badge bgr" style="font-size:10px;flex-shrink:0">${ROLES[l.role]?.label||l.role}</span>
+          <span style="flex:1"><b>${l.action}</b>${l.detail?' — '+l.detail:''}</span>
+          <span style="font-size:10px;color:var(--ink3)">${l.dept||''}</span>
+        </div>`).join('')}</div>`
+      :`<div class="empty">No audit entries yet.</div>`}
+    </div>`;
+}
+
+// ── ADMIN ──
+function renderAdmin(){
+  document.getElementById('mc').innerHTML=`
+    <div class="tw" style="margin-bottom:14px">
+      <div class="th2"><span class="tt">Staff accounts</span><button class="btn btn-p" onclick="showAddUserModal()">+ Add staff</button></div>
+      <table><thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Department</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>${db.users.map(u=>`<tr>
+        <td style="font-weight:500">${u.name}</td>
+        <td style="font-family:monospace;font-size:11px">${u.username}</td>
+        <td><span class="badge bb">${ROLES[u.role]?.label||u.role}</span></td>
+        <td style="font-size:11px">${db.departments.find(d=>d.id===u.dept)?.name||'All depts'}</td>
+        <td><span class="badge ${u.active?'bg':'br'}">${u.active?'Active':'Inactive'}</span></td>
+        <td style="display:flex;gap:5px">
+          ${u.id!==currentUser.id?`<button class="btn ${u.active?'btn-d':''}" onclick="toggleUser(${u.id})">${u.active?'Deactivate':'Activate'}</button>`:'<span style="font-size:10px;color:var(--ink3)">You</span>'}
+          <button class="btn" onclick="showResetPassModal(${u.id})">Reset pw</button>
+        </td>
+      </tr>`).join('')}</tbody></table>
+    </div>
+    <div class="tw">
+      <div class="th2"><span class="tt">Departments</span><button class="btn btn-p" onclick="showDeptModal()">+ Add dept</button></div>
+      <table><thead><tr><th>Department</th><th>Drugs</th><th>Prescriptions</th><th>Patients</th><th>Bills</th></tr></thead>
+      <tbody>${db.departments.map(d=>`<tr>
+        <td style="font-weight:500">${d.name}</td>
+        <td>${db.drugs.filter(x=>x.deptId===d.id).length}</td>
+        <td>${db.prescriptions.filter(x=>x.deptId===d.id).length}</td>
+        <td>${db.patients.filter(x=>x.deptId===d.id).length}</td>
+        <td>${db.bills.filter(x=>x.deptId===d.id).length}</td>
+      </tr>`).join('')}</tbody></table>
+    </div>`;
+}
+function showAddUserModal(){
+  showModal(`<h3>Add staff account</h3>
+    <div class="fr">
+      <div class="fg"><label>Full name</label><input id="m-un" placeholder="Full name"></div>
+      <div class="fg"><label>Username</label><input id="m-uu" placeholder="username"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>Password</label><input id="m-upw" type="password" placeholder="password"></div>
+      <div class="fg"><label>Role</label><select id="m-ur"><option value="pharmacist">Pharmacist</option><option value="dispenser">Dispenser</option><option value="receptionist">Receptionist</option><option value="admin">Admin</option></select></div>
+    </div>
+    <div class="fg"><label>Department</label><select id="m-ud"><option value="">All departments</option>${db.departments.map(d=>`<option value="${d.id}">${d.name}</option>`).join('')}</select></div>
+    <div class="ma"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn btn-p" onclick="addUser()">Create</button></div>`);
+}
+function addUser(){
+  const name=document.getElementById('m-un').value.trim();
+  const username=document.getElementById('m-uu').value.trim();
+  const pw=document.getElementById('m-upw').value;
+  if(!name||!username||!pw)return;
+  if(db.users.find(u=>u.username===username)){alert('Username taken.');return;}
+  const dv=document.getElementById('m-ud').value;
+  db.users.push({id:uid(),username,password:pw,name,role:document.getElementById('m-ur').value,dept:dv?parseInt(dv):null,active:true});
+  log('Created account',`${name} (${username})`);closeModal();save();renderMain();
+}
+function toggleUser(id){
+  const u=db.users.find(x=>x.id===id);u.active=!u.active;
+  log(`${u.active?'Activated':'Deactivated'} account`,u.name);save();renderMain();
+}
+function showResetPassModal(id){
+  const u=db.users.find(x=>x.id===id);
+  showModal(`<h3>Reset password: ${u.name}</h3>
+    <div class="fg"><label>New password</label><input id="m-np" type="password" placeholder="New password"></div>
+    <div class="ma"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn btn-p" onclick="resetPass(${id})">Reset</button></div>`);
+}
+function resetPass(id){
+  const np=document.getElementById('m-np').value;if(!np)return;
+  const u=db.users.find(x=>x.id===id);u.password=np;
+  log('Reset password',u.name);closeModal();save();renderMain();
+}
+function showDeptModal(){
+  showModal(`<h3>Add department</h3>
+    <div class="fg"><label>Department name</label><input id="m-dname" placeholder="e.g. Paediatrics"></div>
+    <div class="ma"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn btn-p" onclick="addDept()">Add</button></div>`);
+}
+function addDept(){
+  const name=document.getElementById('m-dname').value.trim();if(!name)return;
+  db.departments.push({id:uid(),name});
+  log('Added department',name);closeModal();save();renderMain();renderDepts();
+}
+
+function showModal(html){
+  document.getElementById('modal-root').innerHTML=`<div class="mbg" onclick="if(event.target===this)closeModal()"><div class="modal">${html}</div></div>`;
+}
+function closeModal(){document.getElementById('modal-root').innerHTML='';}
+
+load().then(()=>{});
+</script>
